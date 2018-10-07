@@ -8,6 +8,8 @@
   "license": "none",
   "private": true,
   "dependencies": {
+    "koa": "^2.5.3",
+    "koa-router": "^7.4.0",
     "puppeteer": "^1.9.0",
     "ts-node": "^7.0.1",
     "typescript": "^3.1.1"

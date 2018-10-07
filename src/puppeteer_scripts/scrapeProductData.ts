@@ -1,5 +1,6 @@
 import puppeteer from 'puppeteer';
 
+// TODO - these selectors are not universal - e.g. ASIN B07G53N6M8
 const selectors = {
   category: '#wayfinding-breadcrumbs_feature_div ul',
   dimensions: '.size-weight', // note - we want the 2nd of these
@@ -7,7 +8,6 @@ const selectors = {
   rank: '#SalesRank .value'
 }
 const WAIT_TIMEOUT = 5; // seconds
-
 
 // TODO - not any
 function scrapeData(selectorList: any): any {

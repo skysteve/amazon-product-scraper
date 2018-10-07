@@ -1,9 +1,14 @@
-import { scrapeProductData } from "./puppeteer_scripts/scrapeProductData";
+import { AddressInfo } from 'net';
+import createServer from './server';
 
-scrapeProductData('B002QYW8LW')
-  .then((productData) => {
-    console.log(JSON.stringify(productData, null, 2));
+createServer()
+  .then((app) => {
+    const listener = app.listen(9876, () => {
+      // tslint:disable-next-line:no-console
+      console.log(`Server started on port ${(listener.address() as AddressInfo).port}`);
+    });
   })
-  .catch((ex) => {
-    console.error(ex);
+  .catch ((e) => {
+    // tslint:disable-next-line:no-console
+    console.error(e);
   });
