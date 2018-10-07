@@ -23,5 +23,4 @@ export const handler: Router.IMiddleware = (ctx) => {
       error: ex.message
     };
   });
-
 };

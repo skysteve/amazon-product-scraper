@@ -1,5 +1,7 @@
 import puppeteer from 'puppeteer';
 
+import {IProduct} from '../interfaces/Product';
+
 // TODO - these selectors are not universal - e.g. ASIN B07G53N6M8
 const selectors = {
   category: '#wayfinding-breadcrumbs_feature_div ul',
@@ -10,8 +12,8 @@ const selectors = {
 const WAIT_TIMEOUT = 5; // seconds
 
 // TODO - not any
-function scrapeData(selectorList: any): any {
-  const result: any = {};
+function scrapeData(selectorList: any): IProduct {
+  const result: IProduct = {};
 
   const elTitle = document.querySelector(selectorList.title);
   const elCategory = document.querySelector(selectorList.category);
