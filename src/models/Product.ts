@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { IProduct } from '../interfaces/Product';
 
 // TODO - can we build this from TypeScript?
 const schema = new mongoose.Schema({
@@ -24,7 +25,7 @@ const schema = new mongoose.Schema({
  /**
   * Helper method to override the _id with an id property for the external world
   */
-schema.methods.toResponse = function() {
+schema.methods.toResponse = function (): IProduct {
   const base = this.toJSON();
 
   base.id = base._id;

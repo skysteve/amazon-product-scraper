@@ -2,8 +2,6 @@ import * as Router from 'koa-router';
 import { scrapeProductData } from '../puppeteer_scripts/scrapeProductData';
 import Product from '../models/Product';
 
-// TODO - put the data into a DB + try to get from the DB first
-
 export const handler: Router.IMiddleware = async (ctx) => {
   const asin = ctx.params.asin;
 

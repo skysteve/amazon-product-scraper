@@ -49,6 +49,7 @@ export async function scrapeProductData(asin: string) {
 
   // get the data from the page
   const jsonData = await page.evaluate(scrapeData, selectors);
+  jsonData.id = asin;
 
   // close the page, and return the result
   await browser.close();
