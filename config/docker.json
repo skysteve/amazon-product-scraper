@@ -1,0 +1,5 @@
+{
+  "mongodb": {
+    "connectionString": "mongodb://mongo/amazonProducts"
+  }
+}
