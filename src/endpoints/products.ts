@@ -17,7 +17,7 @@ export const handler: Router.IMiddleware = async (ctx) => {
   // if we found the product in the DB - return it back - no need to scrape it
   // TODO - this doesn't allow us to refresh from the site
   if (dbProduct) {
-    return ctx.body = dbProduct.toJSON();
+    return ctx.body = (dbProduct as any).toResponse();
   }
 
   // scrape the product - and return the json
