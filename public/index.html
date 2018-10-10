@@ -6,10 +6,12 @@
     <title>Amazon Product viewer!</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script defer src="./js/bundle.js"></script>
   </head>
   <body>
   <section class="section">
     <div class="container">
+        <notification-bar id="notification-bar"></notification-bar>
       <h1 class="title">
         Amazon product viewer
       </h1>
@@ -19,38 +21,10 @@
     </div>
     <hr>
     <div class="columns">
-      <div class="column">
-        <form action="/product" method="GET">
-          <div class="field">
-            <label class="label">ASIN</label>
-            <div class="control">
-              <input id="asin" class="input" type="text" placeholder="Text input">
-            </div>
-            <p class="help">Enter the ASIN for a product</p>
-          </div>
-          <div class="control">
-            <button class="button is-primary">Submit</button>
-          </div>
-        </form>
-        <h1>TODO - catch the submit - cancel it, and submit via fetch</h1>
+      <div class="column" id="column-input">
+        <search-form id="search-form"></search-form>
       </div><!-- end col 1 -->
-      <div class="column">
-        <table class="table is-striped">
-          <tr>
-            <td>Title</td>
-          </tr>
-          <tr>
-            <td>Category</td>
-          </tr>
-          <tr>
-            <td>Dimensions</td>
-          </tr>
-          <tr>
-            <td>Rank</td>
-          </tr>
-        </table>
-
-      </div>
+      <output-panel id="output-panel"></output-panel>
     </div><!-- end columns -->
   </section>
   </body>

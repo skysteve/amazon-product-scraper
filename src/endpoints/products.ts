@@ -4,13 +4,16 @@ import Product from '../models/Product';
 import { ProductNotFoundError } from '../errors/ProductNotFoundError';
 
 export const handler: Router.IMiddleware = async (ctx) => {
-  const asin = ctx.params.asin;
+  let asin = ctx.params.asin;
   const refresh = ctx.query.refresh === 'true';
 
   // this shouldn't happen - koa should do it for us, but to be safe
   if (!asin) {
     throw new Error('ASIN must be supplied');
   }
+
+  // for consistency - uppercase the ASIN
+  asin = asin.toUpperCase();
 
   const dbProduct = await Product.findById(asin);
 

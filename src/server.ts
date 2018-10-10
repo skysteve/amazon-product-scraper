@@ -1,6 +1,7 @@
 import config from 'config';
 import Koa from 'koa';
 import Router from 'koa-router';
+import koaStatic from 'koa-static';
 import mongoose from 'mongoose';
 
 import * as products from './endpoints/products';
@@ -16,7 +17,8 @@ export default async function createServer(): Promise<Koa> {
 
   mongoose.connect(config.get('mongodb.connectionString'));
 
-  app.use(router.routes())
+  app.use(koaStatic('public', {extensions: ['html', 'js']}))
+  .use(router.routes())
   .use(router.allowedMethods());
 
   return new Promise((resolve) => {
