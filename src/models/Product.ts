@@ -10,6 +10,10 @@ const schema = new mongoose.Schema({
   category: {
     type: 'string'
   },
+  deleted: {
+    type: 'boolean',
+    default: false
+  },
   dimensions: {
     type: 'string'
   },

@@ -1,5 +1,6 @@
 import puppeteer from 'puppeteer';
 
+import {ProductNotFoundError} from '../errors/ProductNotFoundError';
 import {IProduct} from '../interfaces/Product';
 
 // TODO - these selectors are not universal - e.g. ASIN B07G53N6M8
@@ -13,7 +14,7 @@ const WAIT_TIMEOUT = 5; // seconds
 
 // TODO - not any
 function scrapeData(selectorList: any): IProduct {
-  const result: IProduct = {};
+  const result: any = {};
 
   const elTitle = document.querySelector(selectorList.title);
   const elCategory = document.querySelector(selectorList.category);
@@ -38,7 +39,16 @@ function scrapeData(selectorList: any): IProduct {
 export async function scrapeProductData(asin: string) {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-  await page.goto(`https://www.amazon.com/dp/${asin}`);
+  const response = await page.goto(`https://www.amazon.com/dp/${asin}`);
+
+  // this shouldn't happen, but just incase
+  if (!response) {
+    throw new ProductNotFoundError(asin);
+  }
+
+  if (response.status() === 404) {
+    throw new ProductNotFoundError(asin);
+  }
 
   // wait for the selectors to appear on the page
   await Promise.all(Object.values(selectors).map((selector) => {
@@ -49,7 +59,7 @@ export async function scrapeProductData(asin: string) {
 
   // get the data from the page
   const jsonData = await page.evaluate(scrapeData, selectors);
-  jsonData.id = asin;
+  jsonData._id = asin;
 
   // close the page, and return the result
   await browser.close();
