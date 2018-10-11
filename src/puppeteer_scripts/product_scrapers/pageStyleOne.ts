@@ -55,7 +55,7 @@ class PageStyleOne implements IProductPageHelper {
     // wait for the selectors to appear on the page
     await Promise.all(Object.values(selectors).map((selector) => {
       return page.waitForSelector(selector, {
-        timeout: timeout
+        timeout
       });
     }));
 
@@ -66,6 +66,5 @@ class PageStyleOne implements IProductPageHelper {
     return page.evaluate(pageScrapeData, selectors);
   }
 }
-
 
 export default new PageStyleOne();

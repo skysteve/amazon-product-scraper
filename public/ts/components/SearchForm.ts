@@ -38,8 +38,8 @@ export class SearchForm extends HTMLElement {
     try {
       await this.loadProduct();
     } catch (error) {
-      const event = new CustomEvent(SearchEvents.error, { detail: { error } });
-      this.dispatchEvent(event);
+      const errorEvent = new CustomEvent(SearchEvents.error, { detail: { error } });
+      this.dispatchEvent(errorEvent);
     }
 
     return false;
@@ -53,8 +53,8 @@ export class SearchForm extends HTMLElement {
     const asin = elAsin.value.trim();
     const bRefresh = elForceRefresh.checked;
 
-    const event = new CustomEvent(SearchEvents.loadingProduct, { detail: { asin, refresh: bRefresh } });
-    this.dispatchEvent(event);
+    const loadingEvent = new CustomEvent(SearchEvents.loadingProduct, { detail: { asin, refresh: bRefresh } });
+    this.dispatchEvent(loadingEvent);
 
     // stop multiple submissions
     elSubmitButton.setAttribute('disabled', 'disabled');
@@ -64,8 +64,8 @@ export class SearchForm extends HTMLElement {
     // if we get a product back - render it
     if (res.status === 200) {
       const product = await res.json() as IProduct;
-      const event = new CustomEvent(SearchEvents.productLoaded, { detail: { product } });
-      this.dispatchEvent(event);
+      const loadedEvent = new CustomEvent(SearchEvents.productLoaded, { detail: { product } });
+      this.dispatchEvent(loadedEvent);
       // allow the button to be clicked again
       elSubmitButton.removeAttribute('disabled');
       return;

@@ -1,5 +1,5 @@
-import { IProduct } from "../../../src/interfaces/Product";
-import { ProductTable } from "./ProductTable";
+import { IProduct } from '../../../src/interfaces/Product';
+import { ProductTable } from './ProductTable';
 
 export class OutputPanel extends HTMLElement {
   constructor() {

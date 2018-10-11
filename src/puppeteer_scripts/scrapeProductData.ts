@@ -26,7 +26,7 @@ function formatRanks(rawString?: string): string[] | undefined {
     if (!regexMatch.test(current)) {
       resultsArray.push(current);
     } else {
-      const next = ranksArray[i+1];
+      const next = ranksArray[i + 1];
       if (!next) {
         break;
       }
@@ -87,4 +87,4 @@ export async function scrapeProductData(asin: string) {
   // close the page, and return the result
   await page.close();
   return jsonData;
-};
+}

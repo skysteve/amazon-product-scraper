@@ -28,4 +28,4 @@ export default async function createServer(): Promise<Koa> {
       return resolve(app);
     });
   });
-};
+}

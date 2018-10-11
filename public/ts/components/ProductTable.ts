@@ -1,4 +1,4 @@
-import { IProduct } from "../../../src/interfaces/Product";
+import { IProduct } from '../../../src/interfaces/Product';
 
 export class ProductTable extends HTMLTableElement {
   private product: IProduct;

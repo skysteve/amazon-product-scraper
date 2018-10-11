@@ -18,7 +18,7 @@ function pageScrapeData(selectorList: any): IProduct {
   const elProductDetails = document.querySelectorAll(selectorList.productDetails);
 
   // this shouldn't happen, but just incase, check all our elements exist
-  if (!elTitle || !elCategory || !elProductDetails|| elProductDetails.length < 1) {
+  if (!elTitle || !elCategory || !elProductDetails || elProductDetails.length < 1) {
     throw new Error(`Could not find selector for ${selectorList.title}`);
   }
 
@@ -66,7 +66,7 @@ class PageStyleTwo implements IProductPageHelper {
     // wait for the selectors to appear on the page
     await Promise.all(Object.values(selectors).map((selector) => {
       return page.waitForSelector(selector, {
-        timeout: timeout
+        timeout
       });
     }));
 
@@ -77,6 +77,5 @@ class PageStyleTwo implements IProductPageHelper {
     return page.evaluate(pageScrapeData, selectors);
   }
 }
-
 
 export default new PageStyleTwo();

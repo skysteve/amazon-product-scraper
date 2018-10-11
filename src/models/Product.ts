@@ -33,13 +33,13 @@ const schema = new mongoose.Schema({
  /**
   * Helper method to override the _id with an id property for the external world
   */
-schema.methods.toResponse = function (): IProduct {
+schema.methods.toResponse = function toResponse(): IProduct {
   const base = this.toJSON();
 
   base.id = base._id;
   delete base._id;
   return base;
-}
+};
 
 const Product = mongoose.model('Product', schema);
 export default Product;
