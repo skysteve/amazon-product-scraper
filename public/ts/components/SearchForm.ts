@@ -9,9 +9,9 @@ export class SearchForm extends HTMLElement {
 
   public connectedCallback() {
     this.innerHTML = `<div class="field">
-    <label class="label">ASIN</label>
+    <label class="label" for="asin">ASIN</label>
     <div class="control">
-      <input id="asin" class="input" type="text" placeholder="e.g. B002QYW8LW">
+      <input id="asin" name="asin" class="input" type="text" placeholder="e.g. B002QYW8LW"/>
     </div>
     <p class="help">Enter the ASIN for a product</p>
   </div>
