@@ -11,13 +11,3 @@ try {
 } catch (ex) {
   document.body.innerHTML = '<h1>Your browser is not supported, please use a modern browser such as Google Chrome</h1>';
 }
-
-/* if (document.readyState === 'interactive' || document.readyState === 'complete') {
-  this.loadProduct();
-} else {
-  document.onreadystatechange = () => {
-    if (document.readyState === 'interactive') {
-      this.loadProduct();
-    }
-  };
-} */

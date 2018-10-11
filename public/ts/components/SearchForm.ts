@@ -47,6 +47,7 @@ export class SearchForm extends HTMLElement {
 
     const elAsin = document.getElementById('asin') as HTMLInputElement;
     const elForceRefresh = document.getElementById('force-refresh') as HTMLInputElement;
+    const elSubmitButton = this.querySelector('.button') as HTMLButtonElement;
 
     const asin = elAsin.value.trim();
     const bRefresh = elForceRefresh.checked;
@@ -54,16 +55,22 @@ export class SearchForm extends HTMLElement {
     notificationBar.hide();
     // show loading state
     elOutputPanel.loading = true;
+    // stop multiple submissions
+    elSubmitButton.setAttribute('disabled', 'disabled');
 
     const res = await fetch(`/product/${asin}?refresh=${bRefresh}`);
 
     // if we get a product back - render it
     if (res.status === 200) {
       elOutputPanel.product = await res.json() as IProduct;
+      // allow the button to be clicked again
+      elSubmitButton.removeAttribute('disabled');
       return;
     }
 
     notificationBar.show(`Failed to load product: ${res.status} ${res.statusText}`, NotificationLevel.danger);
     elOutputPanel.loading = false;
+    // allow the button to be clicked again
+    elSubmitButton.removeAttribute('disabled');
   }
 }
