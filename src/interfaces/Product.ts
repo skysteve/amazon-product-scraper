@@ -4,5 +4,5 @@ export interface IProduct {
   dimensions?: string;
   deleted: boolean;
   title?: string;
-  rank?: string;
+  rank?: string[];
 }

@@ -18,7 +18,7 @@ const schema = new mongoose.Schema({
     type: 'string'
   },
   rank: {
-    type: 'string'
+    type: 'array'
   },
   title: {
     type: 'string',

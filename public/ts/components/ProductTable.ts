@@ -12,27 +12,27 @@ export class ProductTable extends HTMLTableElement {
   public connectedCallback() {
     this.innerHTML = `
     <tr>
-      <td>ASIN</td>
+      <th>ASIN</th>
       <td>${this.product.id}</td>
     </tr>
     <tr>
-      <td>Title</td>
+      <th>Title</th>
       <td>${this.product.title}</td>
     </tr>
     <tr>
-      <td>Category</td>
+      <th>Category</th>
       <td>${this.product.category}</td>
     </tr>
     <tr>
-      <td>Dimensions</td>
+      <th>Dimensions</th>
       <td>${this.product.dimensions}</td>
     </tr>
     <tr>
-      <td>Rank</td>
-      <td>${this.product.rank}</td>
+      <th>Rank</th>
+      <td>${this.product.rank ? this.product.rank.join('<br>') : ''}</td>
     </tr>
     <tr>
-      <td>Status</td>
+      <th>Status</th>
       <td>${this.product.deleted ? 'This product has been deleted' : 'Active'}</td>
     </tr>`;
   }
