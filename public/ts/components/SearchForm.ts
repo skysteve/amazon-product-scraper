@@ -1,6 +1,10 @@
 import { IProduct } from '../../../src/interfaces/Product';
-import { OutputPanel } from './OutputPanel';
-import { NotificationBar, NotificationLevel } from './NotificationBar';
+
+export enum SearchEvents {
+  error = 'error',
+  loadingProduct = 'loadingProduct',
+  productLoaded = 'productLoaded'
+}
 
 export class SearchForm extends HTMLElement {
   constructor() {
@@ -32,9 +36,9 @@ export class SearchForm extends HTMLElement {
     event.preventDefault();
 
     try {
-      this.loadProduct();
+      await this.loadProduct();
     } catch (error) {
-      const event = new CustomEvent('error', { detail: { error } });
+      const event = new CustomEvent(SearchEvents.error, { detail: { error } });
       this.dispatchEvent(event);
     }
 
@@ -42,9 +46,6 @@ export class SearchForm extends HTMLElement {
   }
 
   private async loadProduct() {
-    const elOutputPanel = document.getElementById('output-panel') as OutputPanel;
-    const notificationBar = document.getElementById('notification-bar') as NotificationBar;
-
     const elAsin = document.getElementById('asin') as HTMLInputElement;
     const elForceRefresh = document.getElementById('force-refresh') as HTMLInputElement;
     const elSubmitButton = this.querySelector('.button') as HTMLButtonElement;
@@ -52,9 +53,9 @@ export class SearchForm extends HTMLElement {
     const asin = elAsin.value.trim();
     const bRefresh = elForceRefresh.checked;
 
-    notificationBar.hide();
-    // show loading state
-    elOutputPanel.loading = true;
+    const event = new CustomEvent(SearchEvents.loadingProduct, { detail: { asin, refresh: bRefresh } });
+    this.dispatchEvent(event);
+
     // stop multiple submissions
     elSubmitButton.setAttribute('disabled', 'disabled');
 
@@ -62,15 +63,16 @@ export class SearchForm extends HTMLElement {
 
     // if we get a product back - render it
     if (res.status === 200) {
-      elOutputPanel.product = await res.json() as IProduct;
+      const product = await res.json() as IProduct;
+      const event = new CustomEvent(SearchEvents.productLoaded, { detail: { product } });
+      this.dispatchEvent(event);
       // allow the button to be clicked again
       elSubmitButton.removeAttribute('disabled');
       return;
     }
 
-    notificationBar.show(`Failed to load product: ${res.status} ${res.statusText}`, NotificationLevel.danger);
-    elOutputPanel.loading = false;
-    // allow the button to be clicked again
+    // allow the button to be clicked again, and throw an error that we failed to load
     elSubmitButton.removeAttribute('disabled');
+    throw new Error(`Failed to load product: ${res.status} ${res.statusText}`);
   }
 }
