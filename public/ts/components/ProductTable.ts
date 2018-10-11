@@ -21,15 +21,15 @@ export class ProductTable extends HTMLTableElement {
     </tr>
     <tr>
       <th>Category</th>
-      <td>${this.product.category}</td>
+      <td>${this.product.category || 'Unknown'}</td>
     </tr>
     <tr>
       <th>Dimensions</th>
-      <td>${this.product.dimensions}</td>
+      <td>${this.product.dimensions || 'Unknown'}</td>
     </tr>
     <tr>
       <th>Rank</th>
-      <td>${this.product.rank ? this.product.rank.join('<br>') : ''}</td>
+      <td>${this.product.rank ? this.product.rank.join('<br>') : 'Unknown'}</td>
     </tr>
     <tr>
       <th>Status</th>

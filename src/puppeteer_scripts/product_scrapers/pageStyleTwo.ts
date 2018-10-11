@@ -2,13 +2,12 @@ import {IProduct} from '../../interfaces/Product';
 import {IProductPageHelper} from '../../interfaces/ProductPageHelper';
 import { Page } from 'puppeteer';
 
-// e.g. https://www.amazon.com/dp/B002QYW8LW?th=1
+// e.g. https://www.amazon.com/dp/B07DN5YN3Y
 
 const selectors = {
   category: '#wayfinding-breadcrumbs_feature_div ul',
-  dimensions: '.size-weight', // note - we want the 2nd of these
-  title: '#productTitle',
-  rank: '#SalesRank .value'
+  productDetails: '#productDetails_detailBullets_sections1 tr', // this has rank and dimensions in
+  title: '#productTitle'
 };
 
 function pageScrapeData(selectorList: any): IProduct {
@@ -16,11 +15,10 @@ function pageScrapeData(selectorList: any): IProduct {
 
   const elTitle = document.querySelector(selectorList.title);
   const elCategory = document.querySelector(selectorList.category);
-  const elRank = document.querySelector(selectorList.rank);
-  const elDimensions = document.querySelectorAll(selectorList.dimensions);
+  const elProductDetails = document.querySelectorAll(selectorList.productDetails);
 
   // this shouldn't happen, but just incase, check all our elements exist
-  if (!elTitle || !elCategory || !elRank || !elDimensions || elDimensions.length < 1) {
+  if (!elTitle || !elCategory || !elProductDetails|| elProductDetails.length < 1) {
     throw new Error(`Could not find selector for ${selectorList.title}`);
   }
 
@@ -29,15 +27,24 @@ function pageScrapeData(selectorList: any): IProduct {
   // clean up all the extra whitespace
   result.category = elCategory.textContent.replace(/\n/g, '').replace(/\s+/g, ' ').trim();
 
-  // reformat the ranks into an array for each category
-  result.rank = elRank.textContent;
-
   let dimensions;
+  let rank;
   // try to find the row with the product dimensions
-  elDimensions.forEach((rowItem) => {
-    const cells = rowItem.querySelectorAll('td');
-    if (cells[0] && cells[0].textContent === 'Product Dimensions') {
-      dimensions = cells[1].textContent;
+  elProductDetails.forEach((rowItem) => {
+    const cellValue = rowItem.querySelector('td');
+    const cellTitle = rowItem.querySelector('th');
+
+    // this should never happen, but check we have a title cell
+    if (!cellTitle) {
+      return;
+    }
+
+    const title = cellTitle.textContent.trim();
+
+    if (title === 'Package Dimensions') {
+      dimensions = cellValue.textContent;
+    } else if (title === 'Best Sellers Rank') {
+      rank = cellValue.textContent;
     }
   });
 
@@ -46,10 +53,14 @@ function pageScrapeData(selectorList: any): IProduct {
     result.dimensions = dimensions.trim();
   }
 
+  if (rank) {
+    result.rank = rank;
+  }
+
   return result;
 }
 
-class PageStyleOne implements IProductPageHelper {
+class PageStyleTwo implements IProductPageHelper {
 
   public async testPage(page: Page, timeout: number): Promise<IProductPageHelper> {
     // wait for the selectors to appear on the page
@@ -68,4 +79,4 @@ class PageStyleOne implements IProductPageHelper {
 }
 
 
-export default new PageStyleOne();
+export default new PageStyleTwo();
