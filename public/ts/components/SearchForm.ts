@@ -1,4 +1,6 @@
 import { IProduct } from '../../../src/interfaces/Product';
+import { OutputPanel } from './OutputPanel';
+import { NotificationBar, NotificationLevel } from './NotificationBar';
 
 export class SearchForm extends HTMLElement {
   constructor() {
@@ -6,11 +8,10 @@ export class SearchForm extends HTMLElement {
   }
 
   public connectedCallback() {
-    const hashValue = location.hash.substring(1); // skip the #
     this.innerHTML = `<div class="field">
     <label class="label">ASIN</label>
     <div class="control">
-      <input id="asin" class="input" type="text" placeholder="e.g. B002QYW8LW" value="${hashValue}">
+      <input id="asin" class="input" type="text" placeholder="e.g. B002QYW8LW">
     </div>
     <p class="help">Enter the ASIN for a product</p>
   </div>
@@ -31,15 +32,38 @@ export class SearchForm extends HTMLElement {
     event.preventDefault();
 
     try {
-      const elAsin = document.getElementById('asin') as HTMLInputElement;
-      // const elForceRefresh = document.getElementById('force-refresh') as HTMLInputElement;
-
-      location.hash = elAsin.value.trim();
+      this.loadProduct();
     } catch (error) {
       const event = new CustomEvent('error', { detail: { error } });
       this.dispatchEvent(event);
     }
 
     return false;
+  }
+
+  private async loadProduct() {
+    const elOutputPanel = document.getElementById('output-panel') as OutputPanel;
+    const notificationBar = document.getElementById('notification-bar') as NotificationBar;
+
+    const elAsin = document.getElementById('asin') as HTMLInputElement;
+    const elForceRefresh = document.getElementById('force-refresh') as HTMLInputElement;
+
+    const asin = elAsin.value.trim();
+    const bRefresh = elForceRefresh.checked;
+
+    notificationBar.hide();
+    // show loading state
+    elOutputPanel.loading = true;
+
+    const res = await fetch(`/product/${asin}?refresh=${bRefresh}`);
+
+    // if we get a product back - render it
+    if (res.status === 200) {
+      elOutputPanel.product = await res.json() as IProduct;
+      return;
+    }
+
+    notificationBar.show(`Failed to load product: ${res.status} ${res.statusText}`, NotificationLevel.danger);
+    elOutputPanel.loading = false;
   }
 }

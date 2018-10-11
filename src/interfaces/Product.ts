@@ -5,4 +5,5 @@ export interface IProduct {
   deleted: boolean;
   title?: string;
   rank?: string[];
+  lastUpdated: Date;
 }

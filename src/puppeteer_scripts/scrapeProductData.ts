@@ -82,6 +82,7 @@ export async function scrapeProductData(asin: string) {
   const jsonData = await pageHandler.scrapeData(page);
   jsonData.rank = formatRanks(jsonData.rank as any);
   jsonData.id = asin;
+  jsonData.lastUpdated = new Date(); // set the last updated date
 
   // close the page, and return the result
   await page.close();

@@ -32,6 +32,10 @@ export class ProductTable extends HTMLTableElement {
       <td>${this.product.rank ? this.product.rank.join('<br>') : 'Unknown'}</td>
     </tr>
     <tr>
+      <th>Last Updated</th>
+      <td>${this.product.lastUpdated}</td>
+    </tr>
+    <tr>
       <th>Status</th>
       <td>${this.product.deleted ? 'This product has been deleted' : 'Active'}</td>
     </tr>`;

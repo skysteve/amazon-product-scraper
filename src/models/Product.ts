@@ -17,6 +17,10 @@ const schema = new mongoose.Schema({
   dimensions: {
     type: 'string'
   },
+  lastUpdated: {
+    type: 'date',
+    required: true
+  },
   rank: {
     type: 'array'
   },
