@@ -25,11 +25,15 @@ export const handler: Router.IMiddleware = async (ctx) => {
 
   // scrape the product - and return the json
   return scrapeProductData(asin)
-  .then(async (productData) => {
+  .then(async (productData: any) => {
     // this should never happen, but just incase
     if (!productData) {
       throw new Error('No product data');
     }
+
+    // fix the ID for mongodb
+    productData._id = productData.id;
+    delete productData.id;
 
     // if we had an existing product - update it
     if (dbProduct) {
