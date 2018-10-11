@@ -41,7 +41,11 @@ function formatRanks(rawString?: string): string[] | undefined {
 
 export async function scrapeProductData(asin: string) {
   if (!browser) {
-    browser = await puppeteer.launch({});
+    browser = await puppeteer.launch({
+      args: [
+        '--no-sandbox'
+      ]
+    });
   }
   const page = await browser.newPage();
   const response = await page.goto(`https://www.amazon.com/dp/${asin}`);
