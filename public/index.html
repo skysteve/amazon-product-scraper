@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Amazon Product viewer!</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script defer src="./js/bundle.js"></script>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#fff">
+  </head>
+  <body>
+  <section class="section">
+    <div class="container">
+        <notification-bar id="notification-bar"></notification-bar>
+      <h1 class="title">
+        Amazon product viewer
+      </h1>
+      <p class="subtitle">
+        Enter an Amazon ASIN below to get product details
+      </p>
+    </div>
+    <hr>
+    <div class="columns">
+      <div class="column" id="column-input">
+        <search-form id="search-form"></search-form>
+      </div><!-- end col 1 -->
+      <output-panel id="output-panel"></output-panel>
+    </div><!-- end columns -->
+  </section>
+  </body>
+</html>

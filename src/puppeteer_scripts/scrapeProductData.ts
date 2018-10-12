@@ -1,56 +1,94 @@
-import puppeteer from 'puppeteer';
+import puppeteer, { Browser } from 'puppeteer';
 
-import {IProduct} from '../interfaces/Product';
+import {ProductNotFoundError} from '../errors/ProductNotFoundError';
+import pageStyleOne from './product_scrapers/pageStyleOne';
+import pageStyleTwo from './product_scrapers/pageStyleTwo';
+import { IProductPageHelper } from '../interfaces/ProductPageHelper';
 
-// TODO - these selectors are not universal - e.g. ASIN B07G53N6M8
-const selectors = {
-  category: '#wayfinding-breadcrumbs_feature_div ul',
-  dimensions: '.size-weight', // note - we want the 2nd of these
-  title: '#productTitle',
-  rank: '#SalesRank .value'
-}
-const WAIT_TIMEOUT = 5; // seconds
+const WAIT_TIMEOUT = 5000; // 5 seconds
+let browser: Browser;
 
-// TODO - not any
-function scrapeData(selectorList: any): IProduct {
-  const result: IProduct = {};
+function formatRanks(rawString?: string): string[] | undefined {
+  const resultsArray: string[] = [];
 
-  const elTitle = document.querySelector(selectorList.title);
-  const elCategory = document.querySelector(selectorList.category);
-  const elRank = document.querySelector(selectorList.rank);
-  const elDimensions = document.querySelectorAll(selectorList.dimensions);
-
-  // this shouldn't happen, but just incase, check all our elements exist
-  if (!elTitle || !elCategory || !elRank || !elDimensions || elDimensions.length < 1) {
-    throw new Error(`Could not find selector for ${selectorList.title}`);
+  if (!rawString) {
+    return;
   }
 
-  // get all the data from the page
-  result.title = elTitle.textContent.trim();
-  result.category = elCategory.textContent.trim(); // TODO - needs tiding up
-  result.rank = elRank.textContent.trim(); // TODO - needs tiding up
-  result.dimensions = elDimensions[1].textContent.trim(); // TODO - needs tiding up
+  const ranksArray = rawString.split('\n')
+  .map((item) => item.trim()) // take out any excess whitespace
+  .filter((item) => !!item);
 
-  return result;
+  const regexMatch = /^#\d+$/;
+
+  for (let i = 0; i < ranksArray.length; i++) {
+    const current = ranksArray[i];
+    if (!regexMatch.test(current)) {
+      resultsArray.push(current);
+    } else {
+      const next = ranksArray[i + 1];
+      if (!next) {
+        break;
+      }
+      resultsArray.push(`${current} ${next}`);
+      i++; // skip the next item in the array - we already have it
+    }
+  }
+
+  // remove anything like "(See top 100)"
+  return resultsArray.map((item) => item.replace(/\(see top \d{1,3}\)/i, '').trim());
 }
 
-
 export async function scrapeProductData(asin: string) {
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  await page.goto(`https://www.amazon.com/dp/${asin}`);
-
-  // wait for the selectors to appear on the page
-  await Promise.all(Object.values(selectors).map((selector) => {
-    return page.waitForSelector(selector, {
-      timeout: WAIT_TIMEOUT * 1000
+  if (!browser) {
+    browser = await puppeteer.launch({
+      args: [
+        '--no-sandbox'
+      ]
     });
-  }));
+  }
+  const page = await browser.newPage();
+  const response = await page.goto(`https://www.amazon.com/dp/${asin}`);
+
+  // this shouldn't happen, but just incase
+  if (!response) {
+    throw new ProductNotFoundError(asin);
+  }
+
+  // if amazon sends us a 404 - the ASIN isn't valid
+  if (response.status() === 404) {
+    throw new ProductNotFoundError(asin);
+  }
+
+  // wait for the page to load fully
+  await page.waitForFunction('document.readyState === "interactive" || document.readyState === "complete"', { timeout : WAIT_TIMEOUT});
+
+  let pageHandler: IProductPageHelper | void;
+  try {
+    // there are a few styles of product page - try to find a helper for this type of page
+    pageHandler = await Promise.race([
+      pageStyleOne.testPage(page, WAIT_TIMEOUT),
+      pageStyleTwo.testPage(page, WAIT_TIMEOUT)
+    ]);
+  } catch (ex) {
+    // if we timed out waiting for selectors, we don't need to throw that error, we make our own belo
+    // anything else, we want to throw the error up the stack
+    if (ex.name !== 'TimeoutError') {
+      throw ex;
+    }
+  }
+
+  if (!pageHandler) {
+    throw new Error('Failed to understand this type of product page');
+  }
 
   // get the data from the page
-  const jsonData = await page.evaluate(scrapeData, selectors);
+  const jsonData = await pageHandler.scrapeData(page);
+  jsonData.rank = formatRanks(jsonData.rank as any);
+  jsonData.id = asin;
+  jsonData.lastUpdated = new Date(); // set the last updated date
 
   // close the page, and return the result
-  await browser.close();
+  await page.close();
   return jsonData;
 }
