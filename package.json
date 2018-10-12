@@ -19,17 +19,29 @@
     "typescript": "^3.1.1"
   },
   "scripts": {
+    "prebuild": "rm -rf ./.public/js",
     "build": "rollup -c rollup.config.js",
     "lint": "tslint -p ./tsconfig.json -t stylish",
     "start": "node index.js",
-    "test": "yarn lint"
+    "pretest": "yarn run lint",
+    "test": "nyc mocha --recursive --exit --require ts-node/register \"test/**/*.test.ts\""
   },
   "devDependencies": {
+    "@types/mocha": "^5.2.5",
     "@types/mongodb": "^3.1.10",
     "@types/mongoose": "^5.2.18",
     "@types/puppeteer": "^1.9.0",
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
+    "mongoose-mock": "^0.4.0",
+    "nyc": "^13.0.1",
+    "proxyquire": "^2.1.0",
     "rollup": "^0.66.6",
     "rollup-plugin-typescript": "^1.0.0",
+    "sinon": "^6.3.3",
+    "sinon-chai": "^3.2.0",
+    "supertest": "^3.3.0",
+    "supertest-koa-agent": "^0.3.0",
     "tslib": "^1.9.3",
     "tslint": "^5.11.0"
   }

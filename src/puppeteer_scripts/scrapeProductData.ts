@@ -8,6 +8,12 @@ import { IProductPageHelper } from '../interfaces/ProductPageHelper';
 const WAIT_TIMEOUT = 5000; // 5 seconds
 let browser: Browser;
 
+/**
+ * Helper method to reformat ranks from a string as it's scraped off the page
+ * into an array of ranks for each category the product is associated with
+ * @param rawString {string} the raw string scraped from the site
+ * @returns {string[]} an array of ranks
+ */
 function formatRanks(rawString?: string): string[] | undefined {
   const resultsArray: string[] = [];
 
@@ -15,17 +21,23 @@ function formatRanks(rawString?: string): string[] | undefined {
     return;
   }
 
+  // cleanup the raw input by removing excess whitespace
   const ranksArray = rawString.split('\n')
   .map((item) => item.trim()) // take out any excess whitespace
   .filter((item) => !!item);
 
   const regexMatch = /^#\d+$/;
 
+  // sometimes the rank can appear in a different array item to
+  // the category, so try to match things up
   for (let i = 0; i < ranksArray.length; i++) {
     const current = ranksArray[i];
+    // if the rank and category are in the same line, just push that straight into the result set
     if (!regexMatch.test(current)) {
       resultsArray.push(current);
     } else {
+      // otherwise, assume the rank is this item, and the category is the next item in the array
+      // so merge them together
       const next = ranksArray[i + 1];
       if (!next) {
         break;
@@ -39,7 +51,12 @@ function formatRanks(rawString?: string): string[] | undefined {
   return resultsArray.map((item) => item.replace(/\(see top \d{1,3}\)/i, '').trim());
 }
 
+/**
+ * Scrape the product data from the page using puppeteer
+ * @param asin {string} the product ASIN to scrape data for
+ */
 export async function scrapeProductData(asin: string) {
+  // don't re-create a browser if we already have one, just saves on load time
   if (!browser) {
     browser = await puppeteer.launch({
       args: [
@@ -47,6 +64,8 @@ export async function scrapeProductData(asin: string) {
       ]
     });
   }
+
+  // nav to the page
   const page = await browser.newPage();
   const response = await page.goto(`https://www.amazon.com/dp/${asin}`);
 
@@ -78,6 +97,8 @@ export async function scrapeProductData(asin: string) {
     }
   }
 
+  // if we didn't find a helper for this type of page - throw an error
+  // in reality we would want to alert someone about this so we can go and add a scraper for it
   if (!pageHandler) {
     throw new Error('Failed to understand this type of product page');
   }

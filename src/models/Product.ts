@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import { IProduct } from '../interfaces/Product';
 
-// TODO - can we build this from TypeScript?
 const schema = new mongoose.Schema({
   _id: { // just use the ASIN as the _id as it's unique for what we're doing anyway
     type: 'string',
