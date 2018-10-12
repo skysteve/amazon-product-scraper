@@ -10,6 +10,10 @@ const selectors = {
   title: '#productTitle'
 };
 
+/**
+ * This method is injected into the page to scrape the product data
+ * @param selectorList - the list of selectors, as above
+ */
 function pageScrapeData(selectorList: any): IProduct {
   const result: any = {};
 
@@ -62,6 +66,12 @@ function pageScrapeData(selectorList: any): IProduct {
 
 class PageStyleTwo implements IProductPageHelper {
 
+  /**
+   * Test to see if the selectors specified above are available on this page,
+   * basically, can we use this page helper to collect the data we need?
+   * @param page {Page} - the puppeteer page
+   * @param timeout {number} - the length of time we should wait before we give up
+   */
   public async testPage(page: Page, timeout: number): Promise<IProductPageHelper> {
     // wait for the selectors to appear on the page
     await Promise.all(Object.values(selectors).map((selector) => {
@@ -73,6 +83,10 @@ class PageStyleTwo implements IProductPageHelper {
     return this;
   }
 
+  /**
+   * Scrape the relevant data from the product page
+   * @param page {Page} - the puppeteer page
+   */
   public scrapeData(page: Page): Promise<IProduct> {
     return page.evaluate(pageScrapeData, selectors);
   }

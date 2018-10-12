@@ -1,3 +1,6 @@
+/**
+ * Custom error for when someone requests a product which doesn't exist
+ */
 export class ProductNotFoundError extends Error {
   public type: string = 'ProductNotFoundError';
 

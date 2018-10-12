@@ -3,6 +3,12 @@ import { scrapeProductData } from '../puppeteer_scripts/scrapeProductData';
 import Product from '../models/Product';
 import { ProductNotFoundError } from '../errors/ProductNotFoundError';
 
+/**
+ * Route handler for /product/:asin where asin is the amazon ASIN for the product
+ * to lookup. This function tries to find the item in mongoDB first, otherwise it goes to amazon to scrape
+ * product data
+ * @param ctx
+ */
 export const handler: Router.IMiddleware = async (ctx) => {
   let asin = ctx.params.asin;
   const refresh = ctx.query.refresh === 'true';
