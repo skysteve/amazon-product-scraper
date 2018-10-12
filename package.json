@@ -44,5 +44,27 @@
     "supertest-koa-agent": "^0.3.0",
     "tslib": "^1.9.3",
     "tslint": "^5.11.0"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "src/interfaces/**/*.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary",
+      "lcov"
+    ],
+    "sourceMap": true,
+    "instrument": true,
+    "cache": true,
+    "all": true
   }
 }
