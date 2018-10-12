@@ -21,7 +21,8 @@
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "lint": "tslint -p ./tsconfig.json -t stylish",
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "yarn lint"
   },
   "devDependencies": {
     "@types/mongodb": "^3.1.10",
